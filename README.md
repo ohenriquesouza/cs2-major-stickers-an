@@ -1,0 +1,1 @@
+# cs2-major-stickers-an
