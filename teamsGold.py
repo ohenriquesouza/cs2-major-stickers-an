@@ -15,8 +15,7 @@ dataframes = []
 
 # Leitura dos arquivos CSV, ignorando a primeira linha e tratando caracteres especiais
 for arquivo in arquivos_csv:
-    df = pd.read_csv(arquivo, skiprows=1, encoding='utf-8', delimiter=',')
-
+    df = pd.read_csv(arquivo, skiprows=0, encoding='utf-8', delimiter=',')
     # Renomear colunas para garantir compatibilidade
     df.columns = ["Nome", "Preco", "Quantidade", "Tipo", "Data_Scraping"]
 
@@ -43,13 +42,16 @@ nomes_equipes = [
     "The MongolZ", "Team Liquid", "GamerLegion", "FURIA", "paiN Gaming", "BIG", "MIBR", "Wildcard"
 ]
 
-# Filtrar os dados para incluir apenas as equipes
-def filtrar_equipes(df):
-    df["Nome"] = df["Nome"].str.replace("Adesivo |", "", regex=False).str.split("(").str[0].str.strip()
-    return df[df["Nome"].isin(nomes_equipes)]
+# Filtrar os dados para incluir apenas adesivos dourados das equipes
+def filtrar_equipes_douradas(df):
+    df["Nome"] = df["Nome"].str.replace("Adesivo |", "", regex=False).str.strip()
+    df["Tipo"] = df["Nome"].str.extract(r"\((.*?)\)")[0]
+    df["Nome"] = df["Nome"].str.split("(").str[0].str.strip()
+    return df[(df["Nome"].isin(nomes_equipes)) & (df["Tipo"] == "Dourado")]
 
-df_primeiro = filtrar_equipes(df_primeiro)
-df_ultimo = filtrar_equipes(df_ultimo)
+
+df_primeiro = filtrar_equipes_douradas(df_primeiro)
+df_ultimo = filtrar_equipes_douradas(df_ultimo)
 
 # Obter os preços médios das equipes
 df_primeiro = df_primeiro.groupby("Nome")["Preco"].mean().sort_values()
@@ -77,7 +79,7 @@ ax.barh(df_primeiro.index, df_primeiro.values, color="royalblue")
 adicionar_logos(ax, df_primeiro, pasta_imgs)
 plt.xlabel("Preço (R$)")
 plt.ylabel("Nome da Equipe")
-plt.title("Preços no Primeiro Dia")
+plt.title("Preços Dourados no Primeiro Dia")
 plt.subplots_adjust(left=0.3)  # Aumentar margem esquerda
 plt.tight_layout()
 plt.show()
@@ -88,7 +90,7 @@ ax.barh(df_ultimo.index, df_ultimo.values, color="darkorange")
 adicionar_logos(ax, df_ultimo, pasta_imgs)
 plt.xlabel("Preço (R$)")
 plt.ylabel("Nome da Equipe")
-plt.title("Preços no Último Dia")
+plt.title("Preços Dourados no Último Dia")
 plt.subplots_adjust(left=0.3)  # Aumentar margem esquerda
 plt.tight_layout()
 plt.show()
@@ -96,13 +98,13 @@ plt.show()
 # Combinar todos os DataFrames em um único para análise temporal
 df_todos_dias = pd.concat(dataframes, ignore_index=True)
 
-# Filtrar para incluir apenas as equipes desejadas
-df_todos_dias = filtrar_equipes(df_todos_dias)
+# Filtrar para incluir apenas os adesivos dourados das equipes
+df_todos_dias = filtrar_equipes_douradas(df_todos_dias)
 
 # Agrupar por Nome da Equipe e Data, e calcular o preço médio
 df_todos_dias = df_todos_dias.groupby(["Nome", "Data_Scraping"])["Preco"].mean().reset_index()
 
-# ----- FIGURA 3: Preço dos adesivos ao longo dos dias para todas as equipes -----
+# ----- FIGURA 3: Preço dos adesivos dourados ao longo dos dias para todas as equipes -----
 fig, ax = plt.subplots(figsize=(14, 8))  # Tamanho maior para acomodar os dados
 
 # Criar um gráfico de linha para cada equipe
@@ -114,7 +116,7 @@ for equipe in nomes_equipes:
 # Configurações do gráfico
 plt.xlabel("Data", fontsize=12)
 plt.ylabel("Preço (R$)", fontsize=12)
-plt.title("Variação dos Preços dos Adesivos ao Longo dos Dias", fontsize=14)
+plt.title("Variação dos Preços Dourados dos Adesivos ao Longo dos Dias", fontsize=14)
 plt.legend(title="Equipes", bbox_to_anchor=(1.05, 1), loc="upper left")  # Legenda fora do gráfico
 plt.grid(True, linestyle="--", alpha=0.7)
 plt.tight_layout()  # Ajustar espaçamentos
