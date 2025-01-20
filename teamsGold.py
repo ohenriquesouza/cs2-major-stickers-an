@@ -77,7 +77,7 @@ def adicionar_logos(ax, df, pasta_imgs):
 fig, ax = plt.subplots(figsize=(12, 8))  # Aumentar tamanho do gráfico
 ax.barh(df_primeiro.index, df_primeiro.values, color="royalblue")
 adicionar_logos(ax, df_primeiro, pasta_imgs)
-plt.xlabel("Preço (R$)")
+plt.xlabel("Preço ($)")
 plt.ylabel("Nome da Equipe")
 plt.title("Preços Dourados no Primeiro Dia")
 plt.subplots_adjust(left=0.3)  # Aumentar margem esquerda
@@ -88,7 +88,7 @@ plt.show()
 fig, ax = plt.subplots(figsize=(12, 8))  # Aumentar tamanho do gráfico
 ax.barh(df_ultimo.index, df_ultimo.values, color="darkorange")
 adicionar_logos(ax, df_ultimo, pasta_imgs)
-plt.xlabel("Preço (R$)")
+plt.xlabel("Preço ($)")
 plt.ylabel("Nome da Equipe")
 plt.title("Preços Dourados no Último Dia")
 plt.subplots_adjust(left=0.3)  # Aumentar margem esquerda
@@ -115,7 +115,7 @@ for equipe in nomes_equipes:
 
 # Configurações do gráfico
 plt.xlabel("Data", fontsize=12)
-plt.ylabel("Preço (R$)", fontsize=12)
+plt.ylabel("Preço ($)", fontsize=12)
 plt.title("Variação dos Preços Dourados dos Adesivos ao Longo dos Dias", fontsize=14)
 plt.legend(title="Equipes", bbox_to_anchor=(1.05, 1), loc="upper left")  # Legenda fora do gráfico
 plt.grid(True, linestyle="--", alpha=0.7)
